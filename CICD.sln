@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CICD.WebAPI", "CICD.WebAPI\CICD.WebAPI.csproj", "{7EB43C7D-4831-4093-9584-471349B8087D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CICD.UnitTests", "CICD.UnitTests\CICD.UnitTests.csproj", "{2879E430-6B76-415B-86A2-99E19F114102}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{7EB43C7D-4831-4093-9584-471349B8087D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EB43C7D-4831-4093-9584-471349B8087D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EB43C7D-4831-4093-9584-471349B8087D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2879E430-6B76-415B-86A2-99E19F114102}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2879E430-6B76-415B-86A2-99E19F114102}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2879E430-6B76-415B-86A2-99E19F114102}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2879E430-6B76-415B-86A2-99E19F114102}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
