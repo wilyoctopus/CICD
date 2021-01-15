@@ -28,7 +28,7 @@ namespace CICD.WebAPI.Controllers
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = rng.Next(-20, 55),
-                Summary = "123" // Summaries[rng.Next(Summaries.Length)]
+                Summary = Summaries[rng.Next(Summaries.Length)]
             })
             .ToArray();
         }
