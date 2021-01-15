@@ -3,12 +3,13 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CICD.WebAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("weatherforecast")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
@@ -32,5 +33,13 @@ namespace CICD.WebAPI.Controllers
             })
             .ToArray();
         }
+
+        [HttpGet]
+        [Route("/version")]
+        public string Version()
+        {
+            return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        }
+
     }
 }
