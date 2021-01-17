@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-	<Version>1.0.0.$(BUILD_NUMBER)</Version>
+	<Version Condition="'$(RELEASE_VERSION)' != ''">$(RELEASE_VERSION)</Version>
   </PropertyGroup>
 
 
