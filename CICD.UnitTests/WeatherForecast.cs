@@ -10,6 +10,8 @@ namespace CICD.UnitTests
         [Fact]
         public void Get_ReturnsWeatherWithExpectedSummary()
         {
+            throw new System.Exception();
+
             // Arrange
             var expectedSummaries = new string[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
             var weatherForecast = new WeatherForecastController();
