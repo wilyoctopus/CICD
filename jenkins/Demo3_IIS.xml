@@ -1,0 +1,100 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.40">
+  <actions>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@1.7.2"/>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@1.7.2">
+      <jobProperties/>
+      <triggers/>
+      <parameters/>
+      <options/>
+    </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
+  </actions>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.87">
+    <script>pipeline {
+    agent any
+    
+    environment {
+        RELEASE_VERSION = &quot;1.0.0.${BUILD_NUMBER}&quot;
+        ARTIFACTS_PATH = &apos;C:\\CICD_Artifacts&apos;
+        DEV_ENV_PATH = &apos;C:\\CICD_Dev&apos;
+        PROD_ENV_PATH = &apos;C:\\CICD_Prod&apos;
+    }
+    
+    stages {
+        stage(&quot;Checkout&quot;){
+            steps {
+                cleanWs()
+                git credentialsId: &apos;GITHUB&apos;,
+                    url: &apos;https://github.com/wilyoctopus/CICD&apos;,
+                    branch: &apos;master&apos;
+            }
+        }
+        
+        stage(&apos;Build&apos;) {
+            steps {
+                bat &apos;dotnet build&apos;
+            }
+        }
+        
+        stage(&apos;Test&apos;) {
+            steps {
+                script {
+                    try {
+                        bat &apos;dotnet test --logger xunit --collect &quot;XPlat Code Coverage&quot;&apos;
+                    }
+                    finally {
+                        xunit([xUnitDotNet(&apos;**/TestResults/*.xml&apos;)])
+                        cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: &apos;**/*.cobertura.xml&apos;, conditionalCoverageTargets: &apos;70, 0, 0&apos;, failUnhealthy: false, failUnstable: false, lineCoverageTargets: &apos;80, 0, 0&apos;, maxNumberOfBuilds: 0, methodCoverageTargets: &apos;80, 0, 0&apos;, onlyStable: false, sourceEncoding: &apos;ASCII&apos;, zoomCoverageChart: false
+                    }
+                }
+            }
+        }
+        
+        stage(&apos;Publish &amp; Pack&apos;)
+        {
+            steps {
+                bat &quot;dotnet publish CICD.WebAPI -c release -o publish&quot;
+                bat &quot;xcopy .\\publish\\* ${ARTIFACTS_PATH}\\${RELEASE_VERSION}\\&quot;
+            }
+        }
+        
+        stage(&apos;Promote to DEV&apos;)
+        {
+            steps {
+                input(&apos;Do you want to proceed?&apos;)
+                bat &apos;%windir%\\system32\\inetsrv\\appcmd.exe stop apppool &quot;CICD_Dev&quot; || ver&gt;nul&apos;
+                
+                bat &quot;del * ${DEV_ENV_PATH}\\* /Q&quot;
+                bat &quot;xcopy ${ARTIFACTS_PATH}\\${RELEASE_VERSION}\\* ${DEV_ENV_PATH}\\ /Y&quot;
+                
+                bat &apos;%windir%\\system32\\inetsrv\\appcmd.exe start apppool &quot;CICD_Dev&quot;&apos;
+            }   
+        }
+        
+        stage(&apos;Promote to PROD&apos;)
+        {
+            steps {
+                input(&apos;Do you want to proceed?&apos;)
+                bat &apos;%windir%\\system32\\inetsrv\\appcmd.exe stop apppool &quot;CICD_Prod&quot;  || ver&gt;nul&apos;
+                
+                bat &quot;del * ${PROD_ENV_PATH}\\* /Q&quot;
+                bat &quot;xcopy ${ARTIFACTS_PATH}\\${RELEASE_VERSION}\\* ${PROD_ENV_PATH}\\ /Y&quot;
+                
+                bat &apos;%windir%\\system32\\inetsrv\\appcmd.exe start apppool &quot;CICD_Prod&quot;&apos;
+            }   
+        }
+    }
+}
+</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
